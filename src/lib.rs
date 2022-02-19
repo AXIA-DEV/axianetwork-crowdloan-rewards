@@ -1,23 +1,23 @@
 // Copyright 2019-2020 PureStake Inc.
-// This file is part of Moonbeam.
+// This file is part of Axtend.
 
-// Moonbeam is free software: you can redistribute it and/or modify
+// Axtend is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Moonbeam is distributed in the hope that it will be useful,
+// Axtend is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Moonbeam.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axtend.  If not, see <http://www.gnu.org/licenses/>.
 
 //! # Crowdloan Rewards Pallet
 //!
 //! This pallet issues rewards to citizens who participated in a crowdloan on the backing relay
-//! chain (eg Kusama) in order to help this parrachain acquire a parachain slot.
+//! chain (eg AxiaTest) in order to help this parrachain acquire a allychain slot.
 //!
 //! ## Monetary Policy
 //!
@@ -118,7 +118,7 @@ pub mod pallet {
 		/// that need to be presented to change a reward address through the relay keys
 		#[pallet::constant]
 		type RewardAddressRelayVoteThreshold: Get<Perbill>;
-		/// The currency in which the rewards will be paid (probably the parachain native currency)
+		/// The currency in which the rewards will be paid (probably the allychain native currency)
 		type RewardCurrency: Currency<Self::AccountId>;
 		/// The AccountId type contributors used on the relay chain.
 		type RelayChainAccountId: Parameter
@@ -154,7 +154,7 @@ pub mod pallet {
 
 	/// Stores info about the rewards owed as well as how much has been vested so far.
 	/// For a primer on this kind of design, see the recipe on compounding interest
-	/// https://substrate.dev/recipes/fixed-point.html#continuously-compounding
+	/// https://axlib.dev/recipes/fixed-point.html#continuously-compounding
 	#[derive(Default, Clone, Encode, Decode, RuntimeDebug, PartialEq, scale_info::TypeInfo)]
 	#[scale_info(skip_type_params(T))]
 	pub struct RewardInfo<T: Config> {
@@ -163,11 +163,11 @@ pub mod pallet {
 		pub contributed_relay_addresses: Vec<T::RelayChainAccountId>,
 	}
 
-	// This hook is in charge of initializing the vesting height at the first block of the parachain
+	// This hook is in charge of initializing the vesting height at the first block of the allychain
 	#[pallet::hooks]
 	impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
 		fn on_finalize(n: <T as frame_system::Config>::BlockNumber) {
-			// In the first block of the parachain we need to introduce the vesting block related info
+			// In the first block of the allychain we need to introduce the vesting block related info
 			if n == 1u32.into() {
 				<InitVestingBlock<T>>::put(T::VestingBlockProvider::current_block_number());
 			}
